@@ -160,6 +160,44 @@
       <div class="quiztitel">Für Eltern: der Lernfortschritt</div>
     </div>
     <section class="eltern-zahlen" id="eltern-zahlen"></section>
+    <section class="sicherung" aria-labelledby="sicherung-titel">
+      <h3 id="sicherung-titel">Fortschritt sichern und wiederherstellen</h3>
+      <p class="sicherung-stand" id="sicherung-stand"></p>
+      <div class="sicherung-spalten">
+        <div class="sicherung-teil">
+          <h4>Sichern</h4>
+          <p>Als Datei speichern oder als Code kopieren, zum Beispiel um ihn sich selbst per Nachricht zu schicken.</p>
+          <div class="knopfreihe">
+            <button class="knopf haupt" id="export-datei" type="button">Sicherungsdatei speichern</button>
+            <button class="knopf" id="export-code" type="button">Sicherungscode anzeigen</button>
+          </div>
+          <div id="code-box" hidden>
+            <label for="code-ausgabe" class="feld-label">Sicherungscode</label>
+            <textarea id="code-ausgabe" class="code-feld" readonly rows="4"></textarea>
+            <div class="knopfreihe"><button class="knopf" id="code-kopieren" type="button">Code kopieren</button><span class="meldung" id="kopier-meldung" role="status"></span></div>
+          </div>
+        </div>
+        <div class="sicherung-teil">
+          <h4>Wiederherstellen</h4>
+          <p>Sicherungsdatei auswählen oder Sicherungscode einfügen. Der Fortschritt auf diesem Gerät wird dabei ersetzt.</p>
+          <div class="knopfreihe">
+            <label class="knopf" for="import-datei">Datei auswählen</label>
+            <input type="file" id="import-datei" accept=".json,.txt,application/json,text/plain" class="nur-sr">
+          </div>
+          <label for="code-eingabe" class="feld-label">… oder Code hier einfügen</label>
+          <textarea id="code-eingabe" class="code-feld" rows="3" placeholder="RITT1:…"></textarea>
+          <div class="knopfreihe"><button class="knopf" id="code-pruefen" type="button">Code einlesen</button></div>
+          <p class="meldung fehler-meldung" id="import-fehler" role="alert"></p>
+          <div class="import-vorschau" id="import-vorschau" hidden>
+            <p id="import-text"></p>
+            <div class="knopfreihe">
+              <button class="knopf haupt" id="import-ja" type="button">Ja, wiederherstellen</button>
+              <button class="knopf" id="import-nein" type="button">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <section>
       <h3>Nach Stationen</h3>
       <div class="tabelle-rahmen"><table class="tabelle" id="eltern-tabelle"></table></div>
@@ -174,11 +212,22 @@
     </section>
     <section class="eltern-hinweis">
       <p>Die Fragen beruhen auf den Arbeitsblättern zur Stadtgeschichte aus dem Sachunterricht einer 4. Klasse und auf den Projektblättern „Osnabrück – Die Friedensstadt“ der Stadt Osnabrück (Inhalt und Konzept: Jana Cordes und Silke Grade, Zeichnungen: Manila Bartnik). Antworten können im eigenen Unterricht etwas anders formuliert sein.</p>
-      <p>Der Fortschritt wird nur in diesem Browser auf diesem Gerät gespeichert. Wer auf einem anderen Gerät übt, fängt dort von vorn an.</p>
-      <div class="knopfreihe">
-        <button class="knopf" id="reset-1" type="button">Fortschritt zurücksetzen …</button>
-        <span id="reset-frage" hidden>Wirklich alles löschen? <button class="knopf falsch-knopf" id="reset-2" type="button">Ja, löschen</button> <button class="knopf" id="reset-nein" type="button">Abbrechen</button></span>
+      <p>Der Fortschritt wird nur in diesem Browser auf diesem Gerät gespeichert. Wer auf einem anderen Gerät übt, fängt dort von vorn an, kann aber eine Sicherung einlesen. Safari auf iPad, iPhone und Mac löscht die Daten, wenn die Seite 7 Tage nicht geöffnet wurde. Deshalb lohnt sich ab und zu eine Sicherung.</p>
+    </section>
+    <section class="neustart" aria-labelledby="neustart-titel">
+      <h3 id="neustart-titel">Neu anfangen</h3>
+      <p>Setzt alle Antworten, Taler, Medaillen und den Verlauf auf null. Der Name und die Ton-Einstellung bleiben. Tipp: Vorher oben eine Sicherung speichern, dann lässt sich der alte Stand zurückholen.</p>
+      <div class="knopfreihe" id="reset-start">
+        <button class="knopf falsch-knopf" id="reset-1" type="button">Fortschritt zurücksetzen …</button>
       </div>
+      <div class="reset-frage" id="reset-frage" hidden>
+        <p><b>Wirklich den ganzen Fortschritt löschen?</b> Das lässt sich ohne Sicherung nicht rückgängig machen.</p>
+        <div class="knopfreihe">
+          <button class="knopf falsch-knopf" id="reset-2" type="button">Ja, alles löschen</button>
+          <button class="knopf" id="reset-nein" type="button">Abbrechen</button>
+        </div>
+      </div>
+      <p class="meldung" id="reset-meldung" role="status"></p>
     </section>
   </main>
 </div>

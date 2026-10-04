@@ -264,6 +264,28 @@ h1, h2, h3 { font-family: var(--anzeige); line-height: 1.15; text-wrap: balance;
 .verlauf { padding-left: 1.3em; margin: 0; font-variant-numeric: tabular-nums; }
 .eltern-hinweis p { color: var(--leise); }
 
+/* Sicherung */
+.sicherung h4 { font-family: var(--anzeige); font-size: 1.1rem; margin: 0 0 4px; }
+.sicherung p { margin: 0 0 10px; }
+.sicherung-stand { color: var(--leise); }
+.sicherung-stand.alt { color: var(--falsch); font-weight: 700; }
+.sicherung-spalten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.sicherung-teil { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.feld-label { font-weight: 700; font-size: .95rem; margin-top: 4px; }
+.code-feld { width: 100%; font-family: ui-monospace, Consolas, monospace; font-size: .8rem; padding: 8px 10px; border: 2px solid var(--linie); border-radius: 10px; background: var(--flaeche-2); color: var(--tinte); resize: vertical; word-break: break-all; }
+.meldung { color: var(--richtig); font-weight: 700; }
+.fehler-meldung { color: var(--falsch); margin: 0; }
+.fehler-meldung:empty { display: none; }
+.import-vorschau { border: 2px solid var(--taler); background: var(--zettel); border-radius: 12px; padding: 10px 12px; }
+.nur-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+label.knopf { cursor: pointer; }
+.knopf:focus-within { outline: 3px solid var(--hase); outline-offset: 3px; }
+
+.neustart { border: 2px solid var(--falsch-hell); }
+.neustart p { margin: 0 0 10px; }
+.reset-frage { border: 2px solid var(--falsch); background: var(--falsch-hell); border-radius: 12px; padding: 10px 12px; }
+.meldung:empty { display: none; }
+
 /* Lupe und Konfetti */
 .lupe { position: fixed; inset: 0; background: rgba(10, 18, 24, .88); display: grid; place-items: center; padding: 56px 16px 16px; z-index: 20; }
 .lupe img { max-height: 100%; max-width: 100%; background: #fff; border-radius: 10px; }
@@ -297,6 +319,7 @@ h1, h2, h3 { font-family: var(--anzeige); line-height: 1.15; text-wrap: balance;
   .sprechblase::before { top: 30px; }
   .paare { grid-template-columns: minmax(0, 1fr); }
   .eltern-zahlen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sicherung-spalten { grid-template-columns: minmax(0, 1fr); }
   .ziffern { grid-template-columns: repeat(3, 64px); }
   .rueckmeldung .maskottchen { width: 64px; height: 64px; }
 }

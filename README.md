@@ -10,8 +10,9 @@ Eine kleine Lern-App für Kinder der 4. Klasse in Osnabrück. Sie hilft beim Üb
 - Neun Antwortarten: Auswahl, Jahreszahlen und Wörter eintippen, Reihenfolge legen, Verbinden, Einsortieren, Lückentext, Mehrfachauswahl und freie Erklärung mit Selbstkontrolle
 - Tipps mit Textauszügen und Bildern aus den Arbeitsblättern
 - Taler, Ränge, Medaillen und eine Elternansicht mit dem Lernfortschritt
+- Fortschritt als Datei oder Code sichern, auf einem anderen Gerät wiederherstellen und bei Bedarf zurücksetzen
 
-Der Fortschritt wird nur im Browser auf dem eigenen Gerät gespeichert. Es werden keine Daten an einen Server geschickt.
+Der Fortschritt wird nur im Browser auf dem eigenen Gerät gespeichert (localStorage). Es werden keine Daten an einen Server geschickt. Über „Für Eltern“ lässt er sich sichern und wiederherstellen.
 
 ## Quellen
 

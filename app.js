@@ -508,9 +508,85 @@
       const d = new Date(x.d);
       v.append(el("li", null, d.toLocaleDateString("de-DE") + " " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " · " + (STATION[x.m] ? STATION[x.m].name : SONDER[x.m]) + ": " + x.ok + " von " + x.n + " richtig, +" + x.t + " Taler"));
     });
-    $("#reset-frage").hidden = true; $("#reset-1").hidden = false;
+    $("#reset-frage").hidden = true; $("#reset-start").hidden = false; $("#reset-meldung").textContent = "";
+    $("#code-box").hidden = true; $("#import-vorschau").hidden = true; $("#import-fehler").textContent = "";
+    sicherungsStand();
     zeige("eltern");
   }
+
+  /* ───── Sichern und Wiederherstellen ───── */
+  const PRAEFIX = "RITT1:";
+  const zuBase64 = (t) => { const b = new TextEncoder().encode(t); let s = ""; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); };
+  const ausBase64 = (b) => new TextDecoder().decode(Uint8Array.from(atob(b), (c) => c.charCodeAt(0)));
+  function sicherungsdaten() { return { app: "ritt-zur-friedensstadt", version: 1, erstellt: new Date().toISOString(), stand: S }; }
+  function sicherungsCode() { return PRAEFIX + zuBase64(JSON.stringify(sicherungsdaten())); }
+  function sicherungGemacht() { S.gesichert = new Date().toISOString(); sichern(); sicherungsStand(); }
+  function sicherungsStand() {
+    const p = $("#sicherung-stand");
+    if (!S.gesichert) { p.textContent = "Noch keine Sicherung erstellt."; p.classList.toggle("alt", Object.keys(S.fragen).length > 20); return; }
+    const tage = Math.floor((Date.now() - new Date(S.gesichert)) / 864e5);
+    p.textContent = "Letzte Sicherung: " + new Date(S.gesichert).toLocaleDateString("de-DE") + (tage > 0 ? " (vor " + tage + (tage === 1 ? " Tag)" : " Tagen)") : " (heute)");
+    p.classList.toggle("alt", tage >= 5);
+  }
+  function dateiSpeichern() {
+    const datum = new Date().toISOString().slice(0, 10);
+    const blob = new Blob([JSON.stringify(sicherungsdaten(), null, 1)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "ritt-zur-friedensstadt-sicherung-" + datum + ".json";
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    sicherungGemacht();
+  }
+  function codeZeigen() {
+    $("#code-ausgabe").value = sicherungsCode(); $("#code-box").hidden = false; $("#kopier-meldung").textContent = "";
+    sicherungGemacht();
+  }
+  async function codeKopieren() {
+    const feld = $("#code-ausgabe");
+    try { await navigator.clipboard.writeText(feld.value); $("#kopier-meldung").textContent = "Kopiert!"; }
+    catch (e) { feld.focus(); feld.select(); $("#kopier-meldung").textContent = "Der Code ist markiert. Jetzt mit Strg+C (oder lange tippen und „Kopieren“) kopieren."; }
+  }
+  let importKandidat = null;
+  function importFehler(t) { $("#import-fehler").textContent = t; $("#import-vorschau").hidden = true; importKandidat = null; }
+  function importPruefen(text) {
+    $("#import-fehler").textContent = "";
+    let daten;
+    try {
+      text = (text || "").trim();
+      if (text.startsWith(PRAEFIX)) daten = JSON.parse(ausBase64(text.slice(PRAEFIX.length).replace(/\s+/g, "")));
+      else daten = JSON.parse(text);
+    } catch (e) { return importFehler("Das ist keine gültige Sicherung. Bitte den ganzen Code einfügen, er beginnt mit „RITT1:“."); }
+    const st = daten && daten.app === "ritt-zur-friedensstadt" && daten.stand;
+    if (!st || typeof st.fragen !== "object" || typeof st.taler !== "number") return importFehler("Diese Datei ist keine Sicherung dieser Lern-App.");
+    const bekannt = Object.keys(st.fragen).filter((id) => D.fragen.some((q) => q.id === id));
+    importKandidat = st;
+    const sicher = D.fragen.filter((q) => ((st.fragen[q.id] || {}).box || 0) >= 2).length;
+    $("#import-text").textContent = "Sicherung vom " + new Date(daten.erstellt).toLocaleDateString("de-DE") + (st.name ? " für " + st.name : "") + ": " +
+      bekannt.length + " Fragen geübt, " + sicher + " sitzen sicher, " + st.taler + " Taler. Soll dieser Stand den Fortschritt auf diesem Gerät ersetzen?";
+    $("#import-vorschau").hidden = false;
+  }
+  function importAusfuehren() {
+    if (!importKandidat) return;
+    const st = importKandidat;
+    S = { fragen: {}, taler: 0, tage: [], ton: true, verlauf: [], name: "" };
+    S = Object.assign(S, st, { gesichert: S.gesichert || st.gesichert });
+    S.fragen = Object.fromEntries(Object.entries(st.fragen).filter(([id]) => D.fragen.some((q) => q.id === id)));
+    sichern(); importKandidat = null;
+    $("#import-vorschau").hidden = true; $("#code-eingabe").value = ""; $("#import-datei").value = "";
+    eltern(); kontoAnzeigen(true);
+    $("#import-fehler").textContent = "";
+    $("#sicherung-stand").textContent = "Wiederhergestellt! " + $("#sicherung-stand").textContent;
+  }
+  $("#export-datei").addEventListener("click", dateiSpeichern);
+  $("#export-code").addEventListener("click", codeZeigen);
+  $("#code-kopieren").addEventListener("click", codeKopieren);
+  $("#code-pruefen").addEventListener("click", () => importPruefen($("#code-eingabe").value));
+  $("#import-datei").addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => importPruefen(String(r.result)); r.onerror = () => importFehler("Die Datei konnte nicht gelesen werden."); r.readAsText(f);
+  });
+  $("#import-ja").addEventListener("click", importAusfuehren);
+  $("#import-nein").addEventListener("click", () => { importKandidat = null; $("#import-vorschau").hidden = true; });
 
   /* ───── Bildlupe ───── */
   function lupe(src) { $("#lupe-bild").src = src; $("#lupe").hidden = false; $("#lupe-zu").focus(); }
@@ -535,9 +611,9 @@
   $("#zu-eltern").addEventListener("click", eltern);
   $("#eltern-zurueck").addEventListener("click", startseite);
   $("#ton").addEventListener("click", () => { S.ton = !S.ton; sichern(); $("#ton").textContent = "Ton: " + (S.ton ? "an" : "aus"); });
-  $("#reset-1").addEventListener("click", () => { $("#reset-frage").hidden = false; $("#reset-1").hidden = true; });
-  $("#reset-nein").addEventListener("click", () => { $("#reset-frage").hidden = true; $("#reset-1").hidden = false; });
-  $("#reset-2").addEventListener("click", () => { S = { fragen: {}, taler: 0, tage: [], ton: S.ton, verlauf: [], name: S.name }; sichern(); eltern(); kontoAnzeigen(); });
+  $("#reset-1").addEventListener("click", () => { $("#reset-frage").hidden = false; $("#reset-start").hidden = true; $("#reset-nein").focus(); });
+  $("#reset-nein").addEventListener("click", () => { $("#reset-frage").hidden = true; $("#reset-start").hidden = false; });
+  $("#reset-2").addEventListener("click", () => { S = { fragen: {}, taler: 0, tage: [], ton: S.ton, verlauf: [], name: S.name, gefragt: S.gefragt, gesichert: S.gesichert }; sichern(); eltern(); kontoAnzeigen(); $("#reset-meldung").textContent = "Der Fortschritt ist zurückgesetzt. Viel Spaß beim neuen Ritt!"; });
   $("#namensform").addEventListener("submit", (e) => { e.preventDefault(); S.name = $("#name-eingabe").value.trim().slice(0, 20); S.gefragt = true; sichern(); startseite(); });
   $("#name-aendern").addEventListener("click", () => { $("#name-eingabe").value = S.name || ""; $("#namensform").hidden = false; $("#startknoepfe").hidden = true; window.scrollTo(0, 0); $("#name-eingabe").focus(); });
 
