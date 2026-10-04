@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ritt zur Friedensstadt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Osnabrücker Rad aus dem Stadtwappen -->
+    <symbol id="rad" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="9"/>
+      <circle cx="50" cy="50" r="9" fill="currentColor"/>
+      <g stroke="currentColor" stroke-width="7" stroke-linecap="round">
+        <line x1="50" y1="14" x2="50" y2="86"/>
+        <line x1="18.8" y1="32" x2="81.2" y2="68"/>
+        <line x1="18.8" y1="68" x2="81.2" y2="32"/>
+      </g>
+    </symbol>
+    <symbol id="muenze" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="18" style="fill: var(--taler)"/>
+      <circle cx="20" cy="20" r="13.5" fill="none" style="stroke: var(--taler-dunkel)" stroke-width="2"/>
+      <text x="20" y="26.5" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="17" style="fill: var(--taler-dunkel)">T</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+
+  <!-- Kopfzeile -->
+  <header class="kopf">
+    <button class="marke" id="zur-karte" type="button" aria-label="Zur Übersicht">
+      <svg class="rad" aria-hidden="true"><use href="#rad"/></svg>
+      <span class="marke-text">Ritt zur <b>Friedensstadt</b></span>
+    </button>
+    <div class="konto">
+      <span class="rang" id="rang" title="Dein Rang">Neuling</span>
+      <span class="talerzahl" title="Deine Taler"><svg aria-hidden="true"><use href="#muenze"/></svg><b id="taler">0</b></span>
+    </div>
+  </header>
+
+  <!-- Startseite -->
+  <main id="seite-start" class="seite">
+    <section class="begruessung">
+      <div class="maskottchen gross"><img id="start-maskottchen" src="bilder/m_vfl.png" alt="Das Steckenpferd mit VfL-Schal"></div>
+      <div class="sprechblase">
+        <p class="hallo" id="hallo">Hallo!</p>
+        <p id="empfehlung">Lass uns zusammen durch die Geschichte von Osnabrück reiten.</p>
+        <form class="namensform" id="namensform" hidden>
+          <label for="name-eingabe">Wie heißt du?</label>
+          <div class="knopfreihe">
+            <input id="name-eingabe" class="wort-feld klein" autocomplete="off" maxlength="20" placeholder="Dein Vorname (freiwillig)">
+            <button class="knopf" type="submit">Weiter</button>
+          </div>
+        </form>
+        <div class="knopfreihe" id="startknoepfe">
+          <button class="knopf haupt" id="los" type="button">Los geht's!</button>
+          <span class="serie" id="serie" hidden></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="training" aria-label="Training">
+      <button class="kachel probe" id="modus-probe" type="button">
+        <img src="bilder/leitfragen_1.jpg" alt="">
+        <span class="kachel-titel">Probearbeit</span>
+        <span class="kachel-text">Die Leitfragen aus dem Unterricht selbst erklären</span>
+      </button>
+      <button class="kachel zeit" id="modus-zeit" type="button">
+        <span class="jahreszahl-deko" aria-hidden="true">1648</span>
+        <span class="kachel-titel">Jahreszahlen-Profi</span>
+        <span class="kachel-text">Zahlen eintippen und ordnen</span>
+      </button>
+      <button class="kachel fehler" id="modus-fehler" type="button">
+        <img src="bilder/m_denkt.png" alt="">
+        <span class="kachel-titel">Fehler-Training</span>
+        <span class="kachel-text" id="fehler-text">Fragen, die noch nicht geklappt haben</span>
+      </button>
+    </section>
+
+    <section class="ritt" aria-labelledby="ritt-titel">
+      <h2 id="ritt-titel">Dein Ritt durch die Geschichte</h2>
+      <ol class="zeitstrahl" id="stationen"></ol>
+    </section>
+
+    <footer class="fuss">
+      <button class="leise-knopf" id="ton" type="button">Ton: an</button>
+      <button class="leise-knopf" id="name-aendern" type="button">Name ändern</button>
+      <button class="leise-knopf" id="zu-eltern" type="button">Für Eltern</button>
+    </footer>
+  </main>
+
+  <!-- Quiz -->
+  <main id="seite-quiz" class="seite" hidden>
+    <div class="quizleiste">
+      <button class="leise-knopf" id="quiz-ende" type="button">← Karte</button>
+      <div class="quiztitel" id="quiz-titel"></div>
+      <div class="punkte" id="punkte" aria-label="Fortschritt in dieser Runde"></div>
+    </div>
+
+    <article class="karte" id="karte" aria-live="polite">
+      <div class="karte-kopf">
+        <span id="frage-nr" class="frage-nr"></span>
+        <span id="lf-hinweis" class="lf-hinweis" hidden>Leitfrage aus dem Unterricht</span>
+      </div>
+      <h2 class="frage" id="frage"></h2>
+      <figure class="fragebild" id="fragebild" hidden><button type="button" class="bildknopf" aria-label="Bild vergrößern"><img alt=""></button></figure>
+      <div class="antwort" id="antwort"></div>
+
+      <div class="tipp" id="tipp" hidden>
+        <p class="tipp-text" id="tipp-text"></p>
+        <p class="tipp-quelle" id="tipp-quelle"></p>
+        <button type="button" class="bildknopf tipp-bild" id="tipp-bild" hidden aria-label="Bild vergrößern"><img alt=""></button>
+      </div>
+
+      <div class="aktionen" id="aktionen">
+        <button class="knopf tipp-knopf" id="tipp-knopf" type="button"><img src="bilder/gluehbirne.png" alt="">Tipp</button>
+        <button class="knopf haupt" id="pruefen" type="button" disabled>Prüfen</button>
+      </div>
+
+      <div class="rueckmeldung" id="rueckmeldung" hidden>
+        <div class="maskottchen"><img id="rm-bild" src="bilder/m_froh.png" alt=""></div>
+        <div class="rm-inhalt">
+          <p class="rm-titel" id="rm-titel"></p>
+          <p class="rm-loesung" id="rm-loesung"></p>
+          <p class="rm-merke" id="rm-merke"></p>
+          <button class="knopf haupt" id="weiter" type="button">Weiter</button>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- Rundenende -->
+  <main id="seite-ende" class="seite" hidden>
+    <section class="ende-kopf">
+      <div class="maskottchen gross"><img id="ende-bild" src="bilder/m_party.png" alt=""></div>
+      <div>
+        <h2 id="ende-titel">Runde geschafft!</h2>
+        <p id="ende-text"></p>
+        <p class="ende-taler"><svg aria-hidden="true"><use href="#muenze"/></svg><span id="ende-taler"></span></p>
+      </div>
+    </section>
+    <section id="ende-fehler" class="ende-fehler"></section>
+    <div class="knopfreihe">
+      <button class="knopf haupt" id="nochmal" type="button">Noch eine Runde</button>
+      <button class="knopf" id="ende-fehler-knopf" type="button">Fehler üben</button>
+      <button class="knopf" id="ende-karte" type="button">Zur Karte</button>
+    </div>
+  </main>
+
+  <!-- Elternbereich -->
+  <main id="seite-eltern" class="seite" hidden>
+    <div class="quizleiste">
+      <button class="leise-knopf" id="eltern-zurueck" type="button">← Karte</button>
+      <div class="quiztitel">Für Eltern: der Lernfortschritt</div>
+    </div>
+    <section class="eltern-zahlen" id="eltern-zahlen"></section>
+    <section>
+      <h3>Nach Stationen</h3>
+      <div class="tabelle-rahmen"><table class="tabelle" id="eltern-tabelle"></table></div>
+    </section>
+    <section>
+      <h3>Fragen, die noch schwerfallen</h3>
+      <ol class="schwer" id="eltern-schwer"></ol>
+    </section>
+    <section>
+      <h3>Letzte Runden</h3>
+      <ol class="verlauf" id="eltern-verlauf"></ol>
+    </section>
+    <section class="eltern-hinweis">
+      <p>Die Fragen beruhen auf den Arbeitsblättern zur Stadtgeschichte aus dem Sachunterricht einer 4. Klasse und auf den Projektblättern „Osnabrück – Die Friedensstadt“ der Stadt Osnabrück (Inhalt und Konzept: Jana Cordes und Silke Grade, Zeichnungen: Manila Bartnik). Antworten können im eigenen Unterricht etwas anders formuliert sein.</p>
+      <p>Der Fortschritt wird nur in diesem Browser auf diesem Gerät gespeichert. Wer auf einem anderen Gerät übt, fängt dort von vorn an.</p>
+      <div class="knopfreihe">
+        <button class="knopf" id="reset-1" type="button">Fortschritt zurücksetzen …</button>
+        <span id="reset-frage" hidden>Wirklich alles löschen? <button class="knopf falsch-knopf" id="reset-2" type="button">Ja, löschen</button> <button class="knopf" id="reset-nein" type="button">Abbrechen</button></span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="lupe" id="lupe" hidden>
+  <button class="lupe-zu knopf" id="lupe-zu" type="button">Schließen</button>
+  <img id="lupe-bild" alt="">
+</div>
+<canvas id="konfetti" aria-hidden="true"></canvas>
+
+<script src="daten.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

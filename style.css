@@ -1,0 +1,305 @@
+/* Layout: ein Ritt von oben nach unten – Zeitstrahl wie die Hase als blaue Linie, Stationen als Etappen.
+   Farben aus dem Stadtwappen (rotes Rad), der Hase (Blau) und dem Reichstaler (Gold). */
+:root {
+  --grund: #edf3f6;
+  --flaeche: #ffffff;
+  --flaeche-2: #f5f9fb;
+  --tinte: #1b2a35;
+  --leise: #556774;
+  --linie: #d3dfe6;
+  --hase: #1d6a87;
+  --hase-hell: #d7ebf2;
+  --rad: #c3272c;
+  --taler: #eab12a;
+  --taler-dunkel: #8a5d00;
+  --richtig: #2c8a4e;
+  --richtig-hell: #ddf3e4;
+  --falsch: #c2510f;
+  --falsch-hell: #fde7d9;
+  --zettel: #fffbe9;
+  --zettel-rand: #e8d9a0;
+  --schatten: 0 2px 0 rgba(27, 42, 53, .08), 0 8px 24px rgba(27, 42, 53, .07);
+  --anzeige: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --text: "Atkinson Hyperlegible", "Segoe UI", Verdana, system-ui, sans-serif;
+  --r: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --grund: #0f1a21; --flaeche: #172631; --flaeche-2: #1c2e3a; --tinte: #e7eff4; --leise: #a2b4c0; --linie: #2a3f4e;
+    --hase: #67b8d6; --hase-hell: #193746; --rad: #ef6a6d; --taler: #f2c24e; --taler-dunkel: #6b4700;
+    --richtig: #58c784; --richtig-hell: #173a26; --falsch: #f39a5f; --falsch-hell: #3d2516;
+    --zettel: #2a2716; --zettel-rand: #5b5130; --schatten: 0 2px 0 rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --grund: #0f1a21; --flaeche: #172631; --flaeche-2: #1c2e3a; --tinte: #e7eff4; --leise: #a2b4c0; --linie: #2a3f4e;
+  --hase: #67b8d6; --hase-hell: #193746; --rad: #ef6a6d; --taler: #f2c24e; --taler-dunkel: #6b4700;
+  --richtig: #58c784; --richtig-hell: #173a26; --falsch: #f39a5f; --falsch-hell: #3d2516;
+  --zettel: #2a2716; --zettel-rand: #5b5130; --schatten: 0 2px 0 rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--grund); color: var(--tinte);
+  font-family: var(--text); font-size: 1.125rem; line-height: 1.5;
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--hase); outline-offset: 3px; border-radius: 8px; }
+h1, h2, h3 { font-family: var(--anzeige); line-height: 1.15; text-wrap: balance; margin: 0; }
+
+.app { max-width: 920px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 48px; }
+
+/* Kopf */
+.kopf { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 6px 14px; flex-wrap: wrap; }
+.marke { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; cursor: pointer; }
+.rad { width: 40px; height: 40px; color: var(--rad); flex: none; }
+.marke-text { font-family: var(--anzeige); font-size: 1.35rem; font-weight: 700; letter-spacing: .01em; }
+.marke-text b { color: var(--rad); font-weight: 800; }
+.konto { display: flex; align-items: center; gap: 10px; }
+.rang { font-family: var(--anzeige); font-weight: 700; font-size: .95rem; padding: 4px 12px; border-radius: 999px; background: var(--hase-hell); color: var(--hase); }
+.talerzahl { display: inline-flex; align-items: center; gap: 6px; font-family: var(--anzeige); font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.talerzahl svg { width: 30px; height: 30px; }
+.talerzahl.hops { animation: hops .5s ease; }
+@keyframes hops { 40% { transform: scale(1.25); } }
+
+/* Maskottchen auf Pappschild */
+.maskottchen { flex: none; width: 92px; height: 92px; border-radius: 50%; background: #fff; border: 3px solid var(--linie); overflow: hidden; display: grid; place-items: center; }
+.maskottchen img { width: 86%; height: 86%; object-fit: contain; }
+.maskottchen.gross { width: 132px; height: 132px; }
+
+/* Knöpfe */
+.knopf {
+  border: 2px solid var(--linie); background: var(--flaeche); border-radius: 14px; padding: 10px 18px; min-height: 48px;
+  font-family: var(--anzeige); font-weight: 700; font-size: 1.1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  box-shadow: 0 3px 0 var(--linie); transition: transform .08s ease;
+}
+.knopf:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--linie); }
+.knopf.haupt { background: var(--hase); border-color: var(--hase); color: var(--flaeche); box-shadow: 0 4px 0 color-mix(in srgb, var(--hase) 60%, #000); }
+.knopf:disabled { opacity: .45; cursor: not-allowed; }
+.knopf.falsch-knopf { border-color: var(--falsch); color: var(--falsch); }
+.leise-knopf { background: none; border: 0; color: var(--leise); cursor: pointer; padding: 8px 6px; font-size: 1rem; text-decoration: underline; text-underline-offset: 3px; }
+.knopfreihe { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Startseite */
+.begruessung { display: flex; gap: 16px; align-items: center; margin-block: 6px 22px; }
+.sprechblase { position: relative; background: var(--flaeche); border-radius: var(--r); padding: 16px 20px; box-shadow: var(--schatten); flex: 1; min-width: 0; }
+.sprechblase::before { content: ""; position: absolute; left: -12px; top: 42px; border: 12px solid transparent; border-right-color: var(--flaeche); border-left: 0; }
+.hallo { font-family: var(--anzeige); font-size: 1.7rem; font-weight: 800; margin: 0 0 2px; }
+.sprechblase p { margin: 0 0 12px; }
+.serie { font-family: var(--anzeige); font-weight: 700; color: var(--taler-dunkel); background: color-mix(in srgb, var(--taler) 30%, transparent); padding: 4px 12px; border-radius: 999px; }
+:root[data-theme="dark"] .serie { color: var(--taler); }
+
+.training { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
+.kachel { position: relative; overflow: hidden; text-align: left; border: 2px solid var(--linie); background: var(--flaeche); border-radius: var(--r); padding: 14px 14px 16px; cursor: pointer; min-height: 132px; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; box-shadow: var(--schatten); }
+.kachel img { position: absolute; right: -8px; top: -8px; width: 92px; opacity: .9; border-radius: 10px; }
+.kachel.probe img { width: 120px; right: -18px; top: -6px; transform: rotate(6deg); border: 1px solid var(--linie); }
+.kachel.fehler img { background: #fff; border-radius: 50%; width: 72px; right: 8px; top: 8px; }
+.kachel-titel { font-family: var(--anzeige); font-weight: 800; font-size: 1.25rem; position: relative; }
+.kachel-text { color: var(--leise); font-size: .95rem; position: relative; line-height: 1.3; }
+.kachel.probe { border-color: var(--rad); }
+.kachel.probe .kachel-titel { color: var(--rad); }
+.jahreszahl-deko { position: absolute; right: 10px; top: 4px; font-family: var(--anzeige); font-weight: 800; font-size: 2.4rem; color: var(--hase); opacity: .22; font-variant-numeric: tabular-nums; }
+
+.ritt h2 { font-size: 1.6rem; margin-bottom: 14px; }
+.zeitstrahl { list-style: none; margin: 0; padding: 0; position: relative; }
+.zeitstrahl::before { content: ""; position: absolute; left: 104px; top: 8px; bottom: 8px; width: 6px; border-radius: 3px; background: var(--hase); opacity: .35; }
+.station { display: grid; grid-template-columns: 88px 36px minmax(0, 1fr); gap: 0 14px; align-items: center; margin-bottom: 14px; }
+.station-zeit { text-align: right; font-family: var(--anzeige); font-weight: 700; color: var(--hase); font-size: 1rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.medaille { width: 36px; height: 36px; border-radius: 50%; background: var(--flaeche); border: 4px solid var(--linie); position: relative; z-index: 1; display: grid; place-items: center; font-family: var(--anzeige); font-weight: 800; font-size: .8rem; }
+.medaille.bronze { border-color: #b8743c; background: #e9b98a; color: #5a3410; }
+.medaille.silber { border-color: #8c9aa5; background: #dfe6eb; color: #34434e; }
+.medaille.gold { border-color: #c79100; background: var(--taler); color: #5c3d00; }
+.station-karte { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--flaeche); border-radius: var(--r); padding: 12px 14px; box-shadow: var(--schatten); border: 2px solid transparent; }
+.station.empfohlen .station-karte { border-color: var(--taler); }
+.station-bild { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: #fff; border: 1px solid var(--linie); }
+.station-name { font-family: var(--anzeige); font-weight: 800; font-size: 1.2rem; line-height: 1.15; }
+.station-kurz { color: var(--leise); font-size: .95rem; line-height: 1.3; }
+.station-zusatz { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--leise); border: 1px solid var(--linie); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; font-family: var(--text); font-weight: 700; }
+.balken { height: 10px; background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 999px; margin-top: 8px; overflow: hidden; }
+.balken > span { display: block; height: 100%; background: var(--richtig); border-radius: 999px; transition: width .6s ease; }
+.balken-text { font-size: .85rem; color: var(--leise); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.station .knopf { min-height: 44px; padding: 8px 16px; }
+
+.fuss { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; border-top: 1px solid var(--linie); padding-top: 10px; }
+
+/* Quiz */
+.quizleiste { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.quiztitel { font-family: var(--anzeige); font-weight: 700; font-size: 1.15rem; flex: 1; min-width: 0; }
+.punkte { display: flex; gap: 5px; flex-wrap: wrap; }
+.punkte i { width: 14px; height: 14px; border-radius: 50%; background: var(--linie); display: block; }
+.punkte i.jetzt { background: var(--hase); box-shadow: 0 0 0 3px var(--hase-hell); }
+.punkte i.ok { background: var(--richtig); }
+.punkte i.nein { background: var(--falsch); }
+
+.karte { background: var(--flaeche); border-radius: 22px; box-shadow: var(--schatten); padding: 20px clamp(16px, 4vw, 32px) 24px; }
+.karte-kopf { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.frage-nr { color: var(--leise); font-size: .95rem; letter-spacing: .04em; }
+.lf-hinweis { font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--rad); border: 2px solid var(--rad); border-radius: 999px; padding: 2px 10px; }
+.frage { font-size: clamp(1.45rem, 3.6vw, 1.9rem); font-weight: 700; margin-bottom: 16px; }
+.fragebild { margin: 0 0 16px; }
+.bildknopf { border: 1px solid var(--linie); background: #fff; padding: 6px; border-radius: 14px; cursor: zoom-in; display: block; max-width: 100%; }
+.bildknopf img { display: block; max-height: 320px; width: auto; margin: 0 auto; border-radius: 8px; }
+
+/* Antwortarten */
+.optionen { display: grid; gap: 10px; }
+.option { display: flex; align-items: center; gap: 12px; text-align: left; border: 2px solid var(--linie); background: var(--flaeche-2); border-radius: 14px; padding: 12px 14px; min-height: 56px; cursor: pointer; font-size: 1.1rem; line-height: 1.35; }
+.option .buchstabe { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--flaeche); border: 2px solid var(--linie); font-family: var(--anzeige); font-weight: 800; }
+.option:hover:not(:disabled) { border-color: var(--hase); }
+.option.gewaehlt { border-color: var(--hase); background: var(--hase-hell); }
+.option.richtig { border-color: var(--richtig); background: var(--richtig-hell); }
+.option.richtig .buchstabe { background: var(--richtig); border-color: var(--richtig); color: var(--flaeche); }
+.option.falsch { border-color: var(--falsch); background: var(--falsch-hell); }
+.option.falsch .buchstabe { background: var(--falsch); border-color: var(--falsch); color: var(--flaeche); }
+.option:disabled { cursor: default; }
+
+.jahr-feld { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.jahr-anzeige { font-family: var(--anzeige); font-weight: 800; font-size: 2.6rem; letter-spacing: .12em; text-align: center; width: 9ch; padding: 4px 8px; border: 3px solid var(--hase); border-radius: 16px; background: var(--flaeche-2); color: var(--tinte); font-variant-numeric: tabular-nums; }
+.jahr-anzeige.richtig { border-color: var(--richtig); background: var(--richtig-hell); }
+.jahr-anzeige.falsch { border-color: var(--falsch); background: var(--falsch-hell); }
+.ziffern { display: grid; grid-template-columns: repeat(3, 72px); gap: 8px; }
+.ziffern button { height: 60px; border-radius: 14px; border: 2px solid var(--linie); background: var(--flaeche-2); font-family: var(--anzeige); font-size: 1.6rem; font-weight: 700; cursor: pointer; box-shadow: 0 3px 0 var(--linie); }
+.ziffern button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--linie); }
+
+.wort-feld { width: 100%; max-width: 420px; font-size: 1.5rem; padding: 12px 16px; border: 3px solid var(--hase); border-radius: 14px; background: var(--flaeche-2); color: var(--tinte); font-family: var(--text); }
+.namensform { display: grid; gap: 6px; margin-bottom: 4px; }
+.namensform label { font-weight: 700; }
+.wort-feld.klein { font-size: 1.15rem; padding: 8px 12px; max-width: 240px; flex: 1; min-width: 0; }
+.wort-feld.richtig { border-color: var(--richtig); background: var(--richtig-hell); }
+.wort-feld.falsch { border-color: var(--falsch); background: var(--falsch-hell); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { border: 2px solid var(--linie); background: var(--flaeche-2); border-radius: 12px; padding: 10px 14px; cursor: pointer; font-size: 1.05rem; line-height: 1.3; text-align: left; min-height: 48px; box-shadow: 0 3px 0 var(--linie); }
+.chip:disabled { opacity: .35; cursor: default; box-shadow: none; }
+.chip.an { border-color: var(--hase); background: var(--hase-hell); }
+.reihe-ziel { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; counter-reset: platz; }
+.reihe-ziel li { counter-increment: platz; display: flex; align-items: center; gap: 12px; min-height: 52px; border: 2px dashed var(--linie); border-radius: 12px; padding: 6px 12px; }
+.reihe-ziel li::before { content: counter(platz); flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--hase); color: var(--flaeche); font-family: var(--anzeige); font-weight: 800; }
+.reihe-ziel li.voll { border-style: solid; border-color: var(--hase); cursor: pointer; background: var(--flaeche-2); }
+.reihe-ziel li.richtig { border-color: var(--richtig); background: var(--richtig-hell); }
+.reihe-ziel li.falsch { border-color: var(--falsch); background: var(--falsch-hell); }
+.reihe-ziel .soll { color: var(--leise); font-size: .9rem; margin-left: auto; }
+.hinweiszeile { color: var(--leise); font-size: .95rem; margin: 0 0 10px; }
+
+.paare { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 18px; align-items: start; }
+.paare-spalte { display: grid; gap: 10px; }
+.paar-knopf { position: relative; border: 2px solid var(--linie); background: var(--flaeche-2); border-radius: 12px; padding: 10px 12px 10px 44px; min-height: 52px; text-align: left; cursor: pointer; font-size: 1.05rem; line-height: 1.3; }
+.paar-knopf .marke-nr { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; border: 2px dashed var(--linie); display: grid; place-items: center; font-family: var(--anzeige); font-weight: 800; font-size: .9rem; color: #fff; }
+.paar-knopf.aktiv { border-color: var(--hase); box-shadow: 0 0 0 3px var(--hase-hell); }
+.paar-knopf.richtig { border-color: var(--richtig); }
+.paar-knopf.falsch { border-color: var(--falsch); }
+.paar-knopf small { display: block; color: var(--falsch); font-size: .85rem; }
+
+.gruppen { display: grid; gap: 10px; }
+.gruppe-zeile { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; border: 2px solid var(--linie); border-radius: 12px; padding: 8px 10px 8px 14px; background: var(--flaeche-2); }
+.gruppe-zeile.richtig { border-color: var(--richtig); background: var(--richtig-hell); }
+.gruppe-zeile.falsch { border-color: var(--falsch); background: var(--falsch-hell); }
+.schalter { display: inline-flex; border: 2px solid var(--linie); border-radius: 12px; overflow: hidden; }
+.schalter button { border: 0; background: var(--flaeche); padding: 8px 12px; min-height: 44px; cursor: pointer; font-size: .95rem; font-weight: 700; }
+.schalter button + button { border-left: 2px solid var(--linie); }
+.schalter button.an { background: var(--hase); color: var(--flaeche); }
+
+.luecken-satz { font-size: 1.3rem; line-height: 2.2; margin: 0 0 14px; }
+.luecke { display: inline-block; min-width: 7.5em; border: 0; border-bottom: 3px solid var(--hase); background: var(--hase-hell); border-radius: 8px 8px 0 0; padding: 0 10px; margin: 0 4px; font: inherit; font-weight: 700; color: var(--tinte); cursor: pointer; line-height: 1.6; }
+.luecke.richtig { border-color: var(--richtig); background: var(--richtig-hell); }
+.luecke.falsch { border-color: var(--falsch); background: var(--falsch-hell); }
+
+.erklaer-feld { width: 100%; min-height: 130px; font: inherit; padding: 12px 14px; border: 2px solid var(--linie); border-radius: 14px; background: var(--flaeche-2); color: var(--tinte); }
+.punkteliste { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+.punkteliste label { display: flex; gap: 12px; align-items: flex-start; border: 2px solid var(--linie); border-radius: 12px; padding: 10px 12px; cursor: pointer; background: var(--flaeche-2); }
+.punkteliste input { width: 24px; height: 24px; flex: none; margin-top: 2px; accent-color: var(--richtig); }
+.muster { background: var(--zettel); border: 2px solid var(--zettel-rand); border-radius: 14px; padding: 12px 16px; }
+
+/* Tipp und Rückmeldung */
+.aktionen { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.tipp-knopf img { width: 28px; height: 28px; background: #fff; border-radius: 50%; }
+.tipp { margin-top: 18px; background: var(--zettel); border: 2px solid var(--zettel-rand); border-radius: 6px 18px 18px 18px; padding: 14px 18px; position: relative; }
+.tipp::before { content: "Tipp"; position: absolute; top: -13px; left: 14px; background: var(--taler); color: #4a3200; font-family: var(--anzeige); font-weight: 800; font-size: .85rem; padding: 0 10px; border-radius: 999px; letter-spacing: .04em; }
+.tipp-text { margin: 4px 0 6px; font-size: 1.1rem; }
+.tipp-quelle { margin: 0; color: var(--leise); font-size: .85rem; font-style: italic; }
+.tipp-bild { margin-top: 10px; }
+
+.rueckmeldung { display: flex; gap: 16px; align-items: flex-start; margin-top: 20px; padding: 16px; border-radius: var(--r); border: 3px solid var(--richtig); background: var(--richtig-hell); animation: rein .25s ease; }
+.rueckmeldung.nein { border-color: var(--falsch); background: var(--falsch-hell); }
+.rm-inhalt { flex: 1; min-width: 0; }
+.rm-titel { font-family: var(--anzeige); font-weight: 800; font-size: 1.6rem; margin: 0 0 4px; color: var(--richtig); }
+.rueckmeldung.nein .rm-titel { color: var(--falsch); }
+.rm-loesung { margin: 0 0 6px; font-weight: 700; }
+.rm-merke { margin: 0 0 12px; }
+.rm-merke b { font-family: var(--anzeige); color: var(--hase); }
+@keyframes rein { from { transform: translateY(8px); opacity: .4; } }
+
+/* Ende */
+.ende-kopf { display: flex; gap: 18px; align-items: center; background: var(--flaeche); border-radius: 22px; padding: 18px 20px; box-shadow: var(--schatten); margin-bottom: 16px; }
+.ende-kopf h2 { font-size: 2rem; }
+.ende-kopf p { margin: 4px 0; }
+.ende-taler { display: flex; align-items: center; gap: 8px; font-family: var(--anzeige); font-weight: 800; font-size: 1.4rem; }
+.ende-taler svg { width: 34px; height: 34px; }
+.ende-fehler { background: var(--flaeche); border-radius: 22px; padding: 6px 20px; box-shadow: var(--schatten); margin-bottom: 16px; }
+.ende-fehler h3 { margin: 12px 0 8px; font-size: 1.3rem; }
+.ende-fehler ul { padding-left: 1.1em; }
+.ende-fehler li { margin-bottom: 10px; }
+.ende-fehler .loes { color: var(--richtig); font-weight: 700; }
+
+/* Eltern */
+#seite-eltern section { background: var(--flaeche); border-radius: 18px; padding: 14px 18px; box-shadow: var(--schatten); margin-bottom: 14px; }
+#seite-eltern h3 { font-size: 1.25rem; margin-bottom: 8px; }
+.eltern-zahlen { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.zahl { text-align: center; }
+.zahl b { display: block; font-family: var(--anzeige); font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.zahl span { color: var(--leise); font-size: .9rem; }
+.tabelle-rahmen { overflow-x: auto; }
+.tabelle { width: 100%; border-collapse: collapse; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.tabelle th, .tabelle td { padding: 8px 10px; border-bottom: 1px solid var(--linie); text-align: right; white-space: nowrap; }
+.tabelle th:first-child, .tabelle td:first-child { text-align: left; white-space: normal; }
+.tabelle th { font-size: .85rem; color: var(--leise); letter-spacing: .04em; text-transform: uppercase; }
+.schwer { padding-left: 1.3em; margin: 0; }
+.schwer li { margin-bottom: 10px; }
+.schwer .statistik { color: var(--falsch); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.schwer .loes { color: var(--richtig); }
+.verlauf { padding-left: 1.3em; margin: 0; font-variant-numeric: tabular-nums; }
+.eltern-hinweis p { color: var(--leise); }
+
+/* Lupe und Konfetti */
+.lupe { position: fixed; inset: 0; background: rgba(10, 18, 24, .88); display: grid; place-items: center; padding: 56px 16px 16px; z-index: 20; }
+.lupe img { max-height: 100%; max-width: 100%; background: #fff; border-radius: 10px; }
+.lupe-zu { position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: 16px; }
+#konfetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+
+@media (max-width: 640px) {
+  body { font-size: 1.05rem; }
+  .training { grid-template-columns: minmax(0, 1fr); }
+  .kachel { min-height: 92px; padding-right: 96px; }
+  .kachel.probe img { width: 84px; right: -10px; top: 8px; }
+  .kachel.fehler img { width: 60px; }
+  .jahreszahl-deko { font-size: 1.9rem; top: 50%; transform: translateY(-50%); }
+  .hallo { font-size: 1.35rem; }
+  .kopf { gap: 6px; }
+  .gruppe-zeile { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .schalter { width: 100%; }
+  .schalter button { flex: 1; }
+  .quizleiste { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+  .punkte { grid-column: 1 / -1; }
+  .quiztitel { font-size: 1.05rem; }
+  .zeitstrahl::before { left: 14px; }
+  .station { grid-template-columns: 34px minmax(0, 1fr); }
+  .station-zeit { grid-column: 2; text-align: left; order: -1; margin-bottom: 4px; }
+  .medaille { grid-row: 1 / span 2; width: 32px; height: 32px; align-self: start; margin-top: 26px; }
+  .station-karte { grid-template-columns: 48px minmax(0, 1fr); }
+  .station-bild { width: 48px; height: 48px; }
+  .station-karte .knopf { grid-column: 1 / -1; }
+  .maskottchen.gross { width: 96px; height: 96px; }
+  .begruessung { align-items: flex-start; }
+  .sprechblase::before { top: 30px; }
+  .paare { grid-template-columns: minmax(0, 1fr); }
+  .eltern-zahlen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ziffern { grid-template-columns: repeat(3, 64px); }
+  .rueckmeldung .maskottchen { width: 64px; height: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
